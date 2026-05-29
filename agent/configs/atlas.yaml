@@ -1,0 +1,54 @@
+# Atlas agent runtime config.
+# Override any field via ATLAS_<NESTED__KEY> env var (pydantic-settings).
+
+network:
+  name: mantle_sepolia
+  chain_id: 5003
+  rpc_url: https://mantle-sepolia.g.alchemy.com/v2/LfKXerIDAvp3ToDzzjfD8
+  explorer: https://sepolia.mantlescan.xyz
+
+contracts:
+  identity: "0x1cfA2B9fAEAdE37950b9742Da78216CB43EA18c5"
+  reputation: "0xe2d8cDF98F611Df9D87861130B4C19Da45b4b455"
+  decision_log: "0x12BC7636C528d60e1D1AE3d90614B075A26c0085"
+  vault: "0x5c2CE9b80981b3C1C3af8901C3A9F760d5421335"
+  base_asset: "0xec328eECF15fee73C11F3e041EFed76944FCffcF"
+
+agent:
+  id: 1
+  rebalance_interval_seconds: 3600
+  min_action_threshold_bps: 50   # skip rebalance if L1 weight change < 0.5%
+  max_weight_per_adapter_bps: 6500
+  min_cash_bps: 500
+
+risk:
+  target_vol_annual: 0.08
+  max_drawdown_alert_bps: 1500
+
+signals:
+  regime_lookback_days: 90
+  factor_lookback_days: 180
+
+llm:
+  enabled: true
+  model: claude-opus-4-7
+  max_tokens: 800
+
+ipfs:
+  gateway: https://ipfs.io/ipfs/
+  pin_endpoint: ""           # optional Pinata-compatible
+  pin_jwt: ""
+
+# Byreal bridge — mirrors a fraction of Mantle TVL onto Byreal CLMM (Solana) and
+# uses Byreal Perps for hedging when regime turns risk_off. Disabled by default.
+# Requires `byreal-cli` and `byreal-perps-cli` installed and authenticated.
+byreal:
+  enabled: false
+  mirror_pct: 0.05
+  hedge_pct: 0.10
+  cmm_pool: ""
+  cmm_input_mint: ""    # Solana USDC mint: EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v
+  cmm_output_mint: ""   # e.g. SOL native mint: So11111111111111111111111111111111111111112
+  hedge_symbol: "BTC"
+  max_leverage: 3
+  dry_run: true

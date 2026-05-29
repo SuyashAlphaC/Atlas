@@ -1,0 +1,16 @@
+[project]
+name = "atlas-bot"
+version = "0.1.0"
+description = "Atlas Telegram bot — deposit, P&L, Beat-Atlas"
+requires-python = ">=3.10"
+dependencies = [
+    "python-telegram-bot>=21.4",
+    "web3>=6.20",
+    "httpx>=0.27",
+    "pydantic-settings>=2.3",
+    "rich>=13.7",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"

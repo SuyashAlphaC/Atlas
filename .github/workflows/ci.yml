@@ -1,0 +1,78 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contracts:
+    name: foundry tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: contracts
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: stable
+      - name: install deps
+        run: forge install --no-commit --shallow
+      - name: build
+        run: forge build --sizes
+      - name: test
+        run: forge test -vv
+      - name: gas snapshot
+        run: forge snapshot --check || true
+
+  agent:
+    name: python agent tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: agent
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: pip
+      - name: install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .[dev]
+      - name: pytest
+        run: pytest -q
+
+  web:
+    name: next.js build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: install
+        run: npm ci --no-audit --no-fund
+      - name: lint
+        run: npm run lint || true
+      - name: build
+        env:
+          NEXT_PUBLIC_VAULT_ADDRESS: "0x0000000000000000000000000000000000000000"
+          NEXT_PUBLIC_DECISION_LOG_ADDRESS: "0x0000000000000000000000000000000000000000"
+          NEXT_PUBLIC_IDENTITY_ADDRESS: "0x0000000000000000000000000000000000000000"
+          NEXT_PUBLIC_REPUTATION_ADDRESS: "0x0000000000000000000000000000000000000000"
+          NEXT_PUBLIC_BASE_ASSET: "0x0000000000000000000000000000000000000000"
+        run: npm run build
