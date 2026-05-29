@@ -195,7 +195,6 @@ directly from the registry — no off-chain DB.
 - [x] Contracts deployed + verified on Mantle Sepolia/Mainnet
 - [x] On-chain AI function (`vault.rebalance` callable only by agent wallet, commits decision)
 - [x] Public frontend (Next.js) with deployment addresses pre-wired
-- [x] ≥2-minute demo video (see `submission/DEMO_SCRIPT.md`)
 - [x] Open-source repo + README
 
 ## Continuous Integration
@@ -207,24 +206,6 @@ GitHub Actions runs on every push + PR to `main`:
 
 Workflow: `.github/workflows/ci.yml`.
 
-## Operations Run Book
-
-### Daily
-1. `atlas step` (or cron every 4-6h)
-2. `atlas feedback` (or cron at 00:00 UTC)
-3. Spot-check dashboard + Pinata gateway link on latest decision
-
-### Weekly
-1. Review reputation summary on Mantlescan / dashboard
-2. Sweep gas top-up to agent wallet
-3. Verify Byreal mirror is in sync (if enabled)
-
-### Pre-Submission
-1. Run `scripts/verify_all.sh` → all 8 Mantlescan green badges
-2. Boot dashboard, screenshot every panel
-3. Record demo video using `submission/DEMO_SCRIPT.md`
-4. `git init && git add -A && git commit -m "Atlas v1" && gh repo create atlas-mantle --public --push`
-5. Submit BUIDL on DoraHacks with `submission/DORAHACKS_SUBMISSION.md` content
-
+#
 ## License
 MIT.
